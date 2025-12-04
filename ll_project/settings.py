@@ -85,6 +85,7 @@ LOGOUT_REDIRECT_URL = 'learning_logs:index'
 LOGIN_URL = 'accounts:login'
 
 # Platform.sh configuration
+# Platform.sh configuration
 config = Config()
 if config.is_valid_platform():
     ALLOWED_HOSTS.append('.platformsh.site')
@@ -97,22 +98,30 @@ if config.is_valid_platform():
 
     if not config.in_build():
         try:
-    db_settings = config.credentials('postgresql')
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': db_settings['path'],
-            'USER': db_settings['username'],
-            'PASSWORD': db_settings['password'],
-            'HOST': db_settings['host'],
-            'PORT': db_settings['port'],
+            db_settings = config.credentials('postgresql')
+            DATABASES = {
+                'default': {
+                    'ENGINE': 'django.db.backends.postgresql',
+                    'NAME': db_settings['path'],
+                    'USER': db_settings['username'],
+                    'PASSWORD': db_settings['password'],
+                    'HOST': db_settings['host'],
+                    'PORT': db_settings['port'],
+                }
+            }
+        except KeyError:
+            # fallback to SQLite for local dev
+            DATABASES = {
+                'default': {
+                    'ENGINE': 'django.db.backends.sqlite3',
+                    'NAME': BASE_DIR / 'db.sqlite3',
+                }
+            }
+    else:
+        # fallback during build phase
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
         }
-    }
-except KeyError:
-    # fallback to SQLite for local dev or build phase
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
