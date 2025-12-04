@@ -96,19 +96,20 @@ if config.is_valid_platform():
         SECRET_KEY = config.projectEntropy
 
     if not config.in_build():
-        db_settings = config.credentials('postgresql')  # must match relationships key in .platform.app.yaml
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.postgresql',
-                'NAME': db_settings['path'],
-                'USER': db_settings['username'],
-                'PASSWORD': db_settings['password'],
-                'HOST': db_settings['host'],
-                'PORT': db_settings['port'],
-            }
+        try:
+    db_settings = config.credentials('postgresql')
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': db_settings['path'],
+            'USER': db_settings['username'],
+            'PASSWORD': db_settings['password'],
+            'HOST': db_settings['host'],
+            'PORT': db_settings['port'],
         }
-else:
-    # Local dev fallback (SQLite)
+    }
+except KeyError:
+    # fallback to SQLite for local dev or build phase
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
