@@ -6,7 +6,7 @@ dependencies:
         gunicorn: "*"
 
 relationships:
-    database: "db:postgresql"
+    database: "postgresql:postgresql"
 
 web:
     upstream:
