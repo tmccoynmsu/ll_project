@@ -138,17 +138,21 @@ LOGIN_URL = 'accounts:login'
 from platformshconfig import Config
 
 config = Config()
+
 if config.is_valid_platform():
+    # Platform.sh hostnames
     ALLOWED_HOSTS.append('.platformsh.site')
     DEBUG = False
 
-    if config.appDir:
-        STATIC_ROOT = Path(config.appDir) / 'static'
-    if config.projectEntropy:
-        SECRET_KEY = config.projectEntropy
+    # Static files
+    STATIC_ROOT = Path(config.appDir) / 'static'
 
-    if not config.in_build():
-        db_settings = config.credentials('database')
+    # Secret key
+    SECRET_KEY = config.projectEntropy
+
+    # Database configuration
+    try:
+        db_settings = config.credentials('database')  # 'database' matches relationships key
         DATABASES = {
             'default': {
                 'ENGINE': 'django.db.backends.postgresql',
@@ -157,5 +161,13 @@ if config.is_valid_platform():
                 'PASSWORD': db_settings['password'],
                 'HOST': db_settings['host'],
                 'PORT': db_settings['port'],
-    },
-}
+            }
+        }
+    except KeyError:
+        # Fall back to local SQLite for build or if relationship not defined
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
