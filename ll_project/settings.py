@@ -140,25 +140,26 @@ from platformshconfig import Config
 config = Config()
 
 if config.is_valid_platform():
-    # Hostnames and debug
     ALLOWED_HOSTS.append('.platformsh.site')
     DEBUG = False
 
-    # Static files
-    STATIC_ROOT = Path(config.appDir) / 'static'
+    if config.appDir:
+        STATIC_ROOT = Path(config.appDir) / 'static'
 
-    # Secret key
-    SECRET_KEY = config.projectEntropy
+    if config.projectEntropy:
+        SECRET_KEY = config.projectEntropy
 
-    # Database configuration
-    db_settings = config.credentials('database')  # must match left-hand side in .platform/app.yaml
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': db_settings['path'],      # "main"
-            'USER': db_settings['username'],  # "main"
-            'PASSWORD': db_settings['password'], # "main"
-            'HOST': db_settings['host'],      # "postgresql.internal"
-            'PORT': db_settings['port'],      # 5432
+    if not config.in_build():
+        # Use the exact relationship key from .platform.app.yaml
+        db_settings = config.credentials('database')
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql',
+                'NAME': db_settings['path'],        # often 'main'
+                'USER': db_settings['username'],    # often 'main'
+                'PASSWORD': db_settings['password'],
+                'HOST': db_settings['host'],
+                'PORT': db_settings['port'],
+            }
         }
-    }
+
