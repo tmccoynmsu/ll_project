@@ -96,7 +96,7 @@ if config.is_valid_platform():
         SECRET_KEY = config.projectEntropy
 
     if not config.in_build():
-        db_settings = config.credentials('database')  # must match relationships key in .platform.app.yaml
+        db_settings = config.credentials('postgresql')  # must match relationships key in .platform.app.yaml
         DATABASES = {
             'default': {
                 'ENGINE': 'django.db.backends.postgresql',
