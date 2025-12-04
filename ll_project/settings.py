@@ -140,7 +140,7 @@ from platformshconfig import Config
 config = Config()
 
 if config.is_valid_platform():
-    # Platform.sh hostnames
+    # Hostnames and debug
     ALLOWED_HOSTS.append('.platformsh.site')
     DEBUG = False
 
@@ -151,23 +151,14 @@ if config.is_valid_platform():
     SECRET_KEY = config.projectEntropy
 
     # Database configuration
-    try:
-        db_settings = config.credentials('database')  # 'database' matches relationships key
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.postgresql',
-                'NAME': db_settings['path'],
-                'USER': db_settings['username'],
-                'PASSWORD': db_settings['password'],
-                'HOST': db_settings['host'],
-                'PORT': db_settings['port'],
-            }
+    db_settings = config.credentials('database')  # must match left-hand side in .platform/app.yaml
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': db_settings['path'],      # "main"
+            'USER': db_settings['username'],  # "main"
+            'PASSWORD': db_settings['password'], # "main"
+            'HOST': db_settings['host'],      # "postgresql.internal"
+            'PORT': db_settings['port'],      # 5432
         }
-    except KeyError:
-        # Fall back to local SQLite for build or if relationship not defined
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': BASE_DIR / 'db.sqlite3',
-            }
-        }
+    }
