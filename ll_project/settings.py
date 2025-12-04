@@ -159,7 +159,3 @@ if config.is_valid_platform():
                 'PORT': db_settings['port'],
     },
 }
-
-
-
-from .settings_psh import *
