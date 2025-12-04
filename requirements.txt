@@ -1,0 +1,10 @@
+asgiref==3.11.0
+beautifulsoup4==4.11.1
+Django==5.2.8
+django-bootstrap5==25.3
+platformshconfig==2.4.0
+soupsieve==2.3.2.post1
+sqlparse==0.5.4
+gunicorn
+psycopg2
+
