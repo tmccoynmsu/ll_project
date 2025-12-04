@@ -1,6 +1,10 @@
 name: "ll_project"
-type: "python:3.10"
+type: "python:3.13"
 
+dependencies:
+    python3:
+        gunicorn: "*"
+        
 relationships:
     database: "db:postgresql"
 
