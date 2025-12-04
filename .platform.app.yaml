@@ -1,7 +1,7 @@
 name: "ll_project"
 type: "python:3.13"
 
-# Define the relationship key that Django will use
+# Corrected relationship key
 relationships:
     postgresql: "postgresql:postgresql"
 
@@ -17,7 +17,6 @@ web:
         "/static":
             root: "static"
             expires: 1h
-            allow: true
 
 # Persistent disk size for the application
 disk: 512
@@ -33,7 +32,6 @@ hooks:
     build: |
         pip install --upgrade pip
         pip install -r requirements.txt
-        pip install -r requirements_remote.txt
         
         mkdir -p logs
         python manage.py collectstatic --noinput
