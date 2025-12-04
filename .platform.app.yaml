@@ -3,7 +3,7 @@ type: "python:3.13"
 
 # Define the relationship key that Django will use
 relationships:
-    database: "postgresql:postgresql"
+    postgresql: "postgresql:postgresql"
 
 # Web configuration
 web:
