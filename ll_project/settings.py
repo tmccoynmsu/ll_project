@@ -123,14 +123,6 @@ if config.is_valid_platform():
                     'NAME': BASE_DIR / 'db.sqlite3',
                 }
             }
-    else:
-        # During build phase, fallback to SQLite
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': BASE_DIR / 'db.sqlite3',
-            }
-        }
 else:
     # Local development fallback
     DATABASES = {
