@@ -1,10 +1,11 @@
 name: "ll_project"
-type: "python:3.10"
+type: "python:3.13"
 
+# Corrected relationship key
 relationships:
-    database: "db:postgresql"
+    postgresql: "postgresql:postgresql"
 
-# The configuration of the app when it's exposed to the web.
+# Web configuration
 web:
     upstream:
         socket_family: unix
@@ -16,26 +17,23 @@ web:
         "/static":
             root: "static"
             expires: 1h
-            allow: true
 
-# The size of the persistent disk of the application (in MB).
+# Persistent disk size for the application
 disk: 512
 
-# Set a local read/write mount for logs.
+# Local mount for logs
 mounts:
     "logs":
         source: local
         source_path: logs
 
-# The hooks executed at various points in the lifecycle of the application.
+# Build and deploy hooks
 hooks:
     build: |
         pip install --upgrade pip
         pip install -r requirements.txt
-        pip install -r requirements_remote.txt
         
-        mkdir logs
-        python manage.py collectstatic
-        rm -rf logs
+        mkdir -p logs
+        python manage.py collectstatic --noinput
     deploy: |
         python manage.py migrate
