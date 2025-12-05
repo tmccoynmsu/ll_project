@@ -2,12 +2,17 @@ from pathlib import Path
 from platformshconfig import Config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Default settings
+SECRET_KEY = 'django-insecure-placeholder-key'
+DEBUG = True
+ALLOWED_HOSTS = ["*"]
+
+# Platform.sh config
 config = Config()
 
-# ... other settings ...
-
-# DATABASE configuration
 if config.is_valid_platform():
+    # Modify defaults safely
     DEBUG = False
     ALLOWED_HOSTS.append('.platformsh.site')
 
@@ -17,7 +22,7 @@ if config.is_valid_platform():
     if config.projectEntropy:
         SECRET_KEY = config.projectEntropy
 
-    # Only access credentials **at runtime**
+    # DATABASE configuration
     if not config.in_build():
         db_settings = config.credentials('postgresql')
         DATABASES = {
@@ -31,7 +36,7 @@ if config.is_valid_platform():
             }
         }
     else:
-        # During build, fallback to SQLite so collectstatic works
+        # SQLite fallback during build
         DATABASES = {
             'default': {
                 'ENGINE': 'django.db.backends.sqlite3',
@@ -39,7 +44,7 @@ if config.is_valid_platform():
             }
         }
 else:
-    # Local fallback
+    # Local development fallback
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
